@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: story-deploy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      #  look for pods with a value of story label
+      app: story
+  #  pod
+  template:
+    metadata:
+      #  labels by which then the pods can be slected.
+      labels:
+        # this doesnt have to be same name as container
+        app: story
+    spec:
+      containers:
+        - name: story
+          image: juliangabriel/storydata:2
+          env:
+            #  env key value pairs here
+            # name of env variable
+            - name: STORY_FOLDER
+              valueFrom:
+                # points at specific configmap then on map it points at specific key which holds value you want to set as a value in this container.
+                configMapKeyRef:
+                  name: data-store-env
+                  key: folder
+                  # this key sets the STORY_FOLDER value
+          volumeMounts:
+            # container internal path mounting
+            - mountPath: /app/story
+              # which volume to use for this container path.
+              name: story-volume
+      volumes:
+        - name: story-volume
+          persistentVolumeClaim:
+            claimName: host-pvc
+
+          # hostPath:
+          #   # this shares between mountPath and this path
+          #   path: /data
+          #   #  let kubernetes now how path should  be created, create if not exist yet
+          #   type: DirectoryOrCreate

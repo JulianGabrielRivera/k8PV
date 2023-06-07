@@ -1,0 +1,17 @@
+# claim that we could use by pods to make that claim to the persistent volume.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  # name of claim
+  name: host-pvc
+spec:
+  # volumeClaimed
+  volumeName: host-pv
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: standard
+
+  resources:
+    requests:
+      #  check how much storage capacity is in our persistent volume and thats how much we could requests, but we can request less, if we have more data than we have capacity this could be a problem.
+      storage: 1Gi

@@ -1,0 +1,25 @@
+# this only works on single node testing enrivonment
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: host-pv
+#  spec for persistentvolume, here we will configure it
+spec:
+  # control the capacity, how much capacity can be used by the different pods which are later executed in our cluster.
+  capacity:
+    # up to 4g of space cna be claimed and used for this host path volume
+    storage: 1Gi
+    # diff sotrage types, Block and Filesystem storage. We have filesystem storage here because we have a folder on the file system inside of our virtual machine
+  volumeMode: Filesystem
+  storageClassName: standard
+  accessModes:
+    # means that this volume can be mounted as a read write volume by a single node, so by multiple pods but same node.
+    - ReadWriteOnce
+    #  read only but can be claimed by multiple nodes, so multile pods on diff nodes can claim this persistent volume, ReadOnlyMany not availalbe on hostPath cause hostPath only defined on one node, so another node and another pod wont be able to claim it.
+    # - ReadOnlyMany
+    # same as ReadOnlyMany but has that write access too
+    # - ReadWriteMany
+  hostPath:
+    path: /data
+    #  let kubernetes now how path should  be created, create if not exist yet
+    type: DirectoryOrCreate

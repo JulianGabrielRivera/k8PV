@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: story-service
+spec:
+  selector:
+    # selector pods with value name of story
+    app: story
+  type: LoadBalancer
+  ports:
+    - protocol: "TCP"
+      # expose port 80
+      port: 80
+      # port my container exposes
+      targetPort: 3000
